@@ -1,12 +1,16 @@
 import { Dialog, DialogActions, DialogTitle, Button } from "@mui/material";
-import axiosInstance from "../axios-instance";
+import { useDispatch } from "react-redux";
+import { deleteRecipe } from "../redux/recipeSlice";
+import { isFulfilled } from "@reduxjs/toolkit";
 
 const ConfirmDeleteDialog = ({ handleClose, open, recipeToDelete }) => {
 
-    const deleteRecipe = async () => {
-        const response = await axiosInstance.delete(`/${recipeToDelete.id}`);
+    const dispatch = useDispatch();
 
-        if(response.status === 200) {
+    const handleDeleteRecipe = async () => {
+        const response = await dispatch(deleteRecipe(recipeToDelete.id));
+
+        if(isFulfilled(response)) {
             handleClose();
         }
     }
@@ -16,7 +20,7 @@ const ConfirmDeleteDialog = ({ handleClose, open, recipeToDelete }) => {
             <DialogTitle>Are you sure you want to delete this recipe?</DialogTitle>
             <DialogActions>
                 <Button variant="outlined" onClick={handleClose}>Cancel</Button>
-                <Button variant="contained" color="error" onClick={deleteRecipe}>Confirm</Button>
+                <Button variant="contained" color="error" onClick={handleDeleteRecipe}>Confirm</Button>
             </DialogActions>
         </Dialog>
     )
